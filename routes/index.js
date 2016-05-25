@@ -42,6 +42,32 @@ router.get('/newstudent', function(req, res){
 	res.render('newstudent', {title: 'Add new student'})
 });
 
+
+router.post('/delete', function(req, res){
+  var MongoClient = mongodb.MongoClient;
+
+  MongoClient.connect(url, function(err, db){
+    if(err){
+      console.log("unable to connect to db: ", err);
+    } else{
+      console.log('connected to mongodb');
+
+      var collection = db.collection('students');
+      var item = {street :""};
+      collection.deleteMany(item, function(err, results){
+        if(err){
+          console.log("error deleting: ", err);
+        } else{
+          console.log(results.deletedCount);
+          console.log(results.result);
+          res.redirect("/thelist")
+        }
+        db.close();
+      });
+    }
+  });
+});
+
 router.post('/addstudent', function(req, res){
   
   if(req.body.student == 0){
